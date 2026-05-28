@@ -1,0 +1,9 @@
+# we use npx; nothing is vendored
+node_modules/
+
+# logs & local runtime state
+*.log
+
+# OS junk
+.DS_Store
+Thumbs.db

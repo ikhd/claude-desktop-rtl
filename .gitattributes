@@ -1,0 +1,14 @@
+# Normalize line endings so the tool works on every OS straight from a clone/download.
+* text=auto
+
+# Unix shell / JS must be LF (so macOS bash never sees Windows CR).
+*.sh       text eol=lf
+*.command  text eol=lf
+*.js       text eol=lf
+*.mjs      text eol=lf
+*.md       text eol=lf
+.gitattributes text eol=lf
+
+# Windows scripts stay CRLF.
+*.ps1      text eol=crlf
+*.bat      text eol=crlf
