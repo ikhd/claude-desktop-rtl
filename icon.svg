@@ -1,0 +1,21 @@
+<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Claude Desktop RTL">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="160" y2="160" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E8895F"/>
+      <stop offset="1" stop-color="#6E56F0"/>
+    </linearGradient>
+  </defs>
+  <!-- app tile -->
+  <rect x="8" y="8" width="144" height="144" rx="36" fill="url(#bg)"/>
+  <rect x="8.5" y="8.5" width="143" height="143" rx="35.5" stroke="#ffffff" stroke-opacity="0.18"/>
+  <!-- RTL paragraph: white lines aligned to the RIGHT edge (x = 120) -->
+  <g fill="#ffffff">
+    <rect x="56" y="46" width="64" height="11" rx="5.5"/>
+    <rect x="38" y="67" width="82" height="11" rx="5.5"/>
+    <rect x="74" y="88" width="46" height="11" rx="5.5"/>
+  </g>
+  <!-- LTR code line: darker, aligned to the LEFT edge (x = 40) -->
+  <rect x="40" y="109" width="58" height="11" rx="5.5" fill="#0B1020" fill-opacity="0.38"/>
+  <!-- right-to-left arrow -->
+  <path d="M106 134 H50 M62 125 L50 134 L62 143" stroke="#ffffff" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

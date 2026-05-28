@@ -2,6 +2,8 @@
 
 # 🖋️ Claude Desktop RTL
 
+<img src="icon.svg" alt="Claude Desktop RTL" width="124" height="124" />
+
 ### دعم العربية والكتابة من اليمين لليسار (RTL) في تطبيق Claude للكمبيوتر
 #### Proper right‑to‑left (Arabic) support for the Claude Desktop app — Windows & macOS
 
