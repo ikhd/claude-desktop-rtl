@@ -49,11 +49,28 @@
     return false;
   }
 
+  // First strong character is RTL? (decides a table's column direction)
+  function firstStrongRTL(s) {
+    if (!s) return false;
+    for (var i = 0; i < s.length; i++) {
+      var c = s.charCodeAt(i);
+      if ((c >= 0x0590 && c <= 0x05FF) || (c >= 0x0600 && c <= 0x06FF) ||
+          (c >= 0x0700 && c <= 0x074F) || (c >= 0x0750 && c <= 0x077F) ||
+          (c >= 0x0780 && c <= 0x07BF) || (c >= 0x07C0 && c <= 0x07FF) ||
+          (c >= 0x08A0 && c <= 0x08FF) || (c >= 0xFB1D && c <= 0xFDFF) ||
+          (c >= 0xFE70 && c <= 0xFEFF)) return true;
+      if ((c >= 0x41 && c <= 0x5A) || (c >= 0x61 && c <= 0x7A)) return false;
+    }
+    return false;
+  }
+
   var CSS =
     '/* Each block resolves its own direction from its first strong char. */\n' +
     '[' + MARK + '="auto"]{unicode-bidi:plaintext;text-align:start}\n' +
-    '/* Code / tables / math stay LTR and isolated. */\n' +
+    '/* Code / math stay LTR and isolated. */\n' +
     LTR + '{unicode-bidi:isolate !important;direction:ltr !important;text-align:left}\n' +
+    '/* RTL tables: force direction so the COLUMN order reverses (first column -> right). */\n' +
+    'table[' + MARK + '="table"]{direction:rtl !important}\n' +
     '/* Mirror list bullets / padding for RTL blocks. */\n' +
     '[dir="rtl"]{text-align:start}\n' +
     '[dir="rtl"] ul,[dir="rtl"] ol{padding-right:1.5em;padding-left:0}\n' +
@@ -85,12 +102,16 @@
     el.setAttribute(MARK, 'auto');
     el.setAttribute('dir', 'auto');                   // native first-strong; CSP-safe attribute
   }
-  // Stamp a TABLE: dir="auto" makes RTL content reverse the COLUMN order
-  // (the first column moves to the right) - not just the text inside cells.
+  // Stamp a TABLE: if its content is RTL, force direction:rtl (via the marker +
+  // CSS !important) so the COLUMN order reverses - first column moves to the right.
   function tagTable(el) {
     if (!el || el.nodeType !== 1 || el.hasAttribute(MARK)) return;
-    el.setAttribute(MARK, 'table');
-    el.setAttribute('dir', 'auto');
+    if (firstStrongRTL(el.textContent || '')) {
+      el.setAttribute(MARK, 'table');
+      el.setAttribute('dir', 'rtl');
+    } else {
+      el.setAttribute(MARK, 'table-ltr');   // leave LTR; marked so we skip it next time
+    }
   }
   function tagTree(root) {
     if (!root || root.nodeType !== 1) return;
