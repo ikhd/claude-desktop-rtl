@@ -71,6 +71,8 @@
     LTR + '{unicode-bidi:isolate !important;direction:ltr !important;text-align:left}\n' +
     '/* RTL tables: force direction so the COLUMN order reverses (first column -> right). */\n' +
     'table[' + MARK + '="table"]{direction:rtl !important}\n' +
+    '/* ...and right-align the CELL text too (beats the app CSS). Code stays LTR (rule above). */\n' +
+    'table[' + MARK + '="table"] th,table[' + MARK + '="table"] td{text-align:right !important;direction:rtl !important}\n' +
     '/* Mirror list bullets / padding for RTL blocks. */\n' +
     '[dir="rtl"]{text-align:start}\n' +
     '[dir="rtl"] ul,[dir="rtl"] ol{padding-right:1.5em;padding-left:0}\n' +
