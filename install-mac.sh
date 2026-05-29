@@ -128,10 +128,14 @@ backup_originals() {   # only the pristine (unpatched) files
 install_rtl() {
   require
   if is_patched; then
-    ok "Claude is already patched - RTL is active."
-    install_agent; orig_version > "$STATE"
-    [ "$AUTO" -eq 0 ] && { step "Launching Claude..."; open -a "Claude" || true; }
-    return 0
+    step "Already patched - restoring originals first to re-apply the latest engine..."
+    if [ -f "$BK/app.asar" ]; then
+      place_file "$BK/app.asar" "$ASAR" || true
+      if [ -f "$BK/plist_paths.txt" ]; then
+        local i=0 pp
+        while IFS= read -r pp; do [ -f "$BK/plist_$i.plist" ] && place_file "$BK/plist_$i.plist" "$pp"; i=$((i + 1)); done < "$BK/plist_paths.txt"
+      fi
+    fi
   fi
 
   step "Quitting Claude..."

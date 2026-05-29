@@ -30,8 +30,8 @@
 
   // Text blocks whose direction should follow their own content.
   var BLOCKS = 'p,li,ul,ol,h1,h2,h3,h4,h5,h6,blockquote,td,th,dd,dt,summary,figcaption,caption';
-  // Elements that must always stay left-to-right.
-  var LTR = 'pre,code,kbd,samp,table,.katex,.katex-display,[class*="code-block"],[class*="codeBlock"]';
+  // Elements that must always stay left-to-right (code only - NOT data tables).
+  var LTR = 'pre,code,kbd,samp,.katex,.katex-display,[class*="code-block"],[class*="codeBlock"]';
 
   // RTL detection via numeric code points (ASCII source only). Covers Hebrew,
   // Arabic, Syriac, Arabic Supplement, Thaana, NKo, Arabic Extended-A, and the
@@ -78,19 +78,31 @@
     if (styleEl) { styleEl.remove(); styleEl = null; }
   }
 
-  // Stamp one element so the browser auto-resolves its direction.
+  // Stamp one text block so the browser auto-resolves its direction.
   function tag(el) {
     if (!el || el.nodeType !== 1 || el.hasAttribute(MARK)) return;
     if (el.closest && el.closest(LTR)) return;        // never touch code
     el.setAttribute(MARK, 'auto');
     el.setAttribute('dir', 'auto');                   // native first-strong; CSP-safe attribute
   }
+  // Stamp a TABLE: dir="auto" makes RTL content reverse the COLUMN order
+  // (the first column moves to the right) - not just the text inside cells.
+  function tagTable(el) {
+    if (!el || el.nodeType !== 1 || el.hasAttribute(MARK)) return;
+    el.setAttribute(MARK, 'table');
+    el.setAttribute('dir', 'auto');
+  }
   function tagTree(root) {
     if (!root || root.nodeType !== 1) return;
-    if (root.matches && root.matches(BLOCKS)) tag(root);
+    if (root.matches) {
+      if (root.matches(BLOCKS)) tag(root);
+      if (root.matches('table')) tagTable(root);
+    }
     if (root.querySelectorAll) {
-      var n = root.querySelectorAll(BLOCKS), i;
-      for (i = 0; i < n.length; i++) tag(n[i]);
+      var b = root.querySelectorAll(BLOCKS), i;
+      for (i = 0; i < b.length; i++) tag(b[i]);
+      var t = root.querySelectorAll('table'), j;
+      for (j = 0; j < t.length; j++) tagTable(t[j]);
     }
   }
 

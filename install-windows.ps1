@@ -123,10 +123,8 @@ Write-Host "  Claude Desktop RTL  -  Windows IN-PLACE patcher"   -ForegroundColo
 Write-Host "==================================================" -ForegroundColor Cyan
 Write-Host ""
 if (Test-Patched) {
-    Ok "Claude is already patched - RTL is active."
-    Setup-AutoUpdate
-    if (-not $Auto) { Info "Launching Claude..."; Start-Process explorer.exe "shell:AppsFolder\$aumid"; Read-Host 'Press Enter to close' }
-    exit 0
+    Ok "Already patched - restoring originals first to re-apply the latest engine..."
+    Restore-FromBackup
 }
 if (-not (Test-Path $PAYLOAD)) { Die "rtl-engine.js not found next to this script." }
 $node = (Get-Command node -ErrorAction SilentlyContinue).Source
