@@ -148,13 +148,18 @@ install_rtl() {
   old_hash="$(asar_header_hash "$ASAR")"
   tmp="$(mktemp -d)"; trap 'rm -rf "$tmp"' RETURN
   asar_cmd extract "$ASAR" "$tmp/app"
-  [ -d "$tmp/app/.vite" ] || die "Unexpected app layout (.vite missing) - Claude changed its structure."
+  [ -d "$tmp/app/.vite/renderer" ] || die "Unexpected app layout (.vite/renderer missing) - Claude changed its structure."
   local injected=0 f merged
+  # Inject ONLY into renderer bundles. The RTL engine is DOM-only code; the
+  # main-process bundles under .vite/build (incl. mcp-runtime/nodeHost.js, which
+  # starts with a `#!/usr/bin/env node` shebang) must NOT be touched. Prepending
+  # to nodeHost.js displaces its shebang off line 1 -> SyntaxError -> the MCP
+  # host process exits early -> all MCP servers / desktop extensions disconnect.
   while IFS= read -r f; do
     grep -q 'CLAUDE RTL PATCH START' "$f" 2>/dev/null && continue
     merged="$(mktemp)"; cat "$PAYLOAD" "$f" > "$merged" && mv "$merged" "$f"
     injected=$((injected + 1))
-  done < <(find "$tmp/app/.vite" -name '*.js' -type f)
+  done < <(find "$tmp/app/.vite/renderer" -name '*.js' -type f)
   [ "$injected" -gt 0 ] || die "No renderer JS files found to inject."
   ok "Injected into $injected file(s)."
 
